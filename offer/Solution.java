@@ -170,6 +170,163 @@ public class Solution {
         }
         return dp[n];
     }
+
+    public double myPow(double x, int n) {
+        if (x == 0 || n == 0) {
+            return 1.0;
+        }
+        if (n == 0) {
+            return 1.0;
+        }
+        long n1 = n;
+        if (n < 0) {
+            n1 = -n1;
+            x = 1 / x;
+        }
+        double res = 1;
+        while (n1 != 0) {
+            if (n1 % 2 == 1) {
+                res = res * x;
+            }
+            x = x * x;
+            n1 /= 2;
+        }
+        return res;
+    }
+
+    public ListNode deleteNode(ListNode head, int val) {
+        if (head == null) {
+            return null;
+        }
+        if (head.val == val) {
+            return head.next;
+        }
+        ListNode p = head;
+        while (p != null) {
+            if (p.next.val == val) {
+                break;
+            }
+            p = p.next;
+        }
+        if (p.next != null) {
+            p.next = p.next.next;
+        }
+        return head;
+    }
+
+    public int[] exchange(int[] nums) {
+        if (nums == null) {
+            return null;
+        }
+        int i = 0;
+        int j = nums.length - 1;
+        while (i < j) {
+            while (i < j && nums[i] % 2 == 1) {
+                i++;
+            }
+            while (i < j && nums[j] % 2 == 0) {
+                j--;
+            }
+            int temp = nums[i];
+            nums[i] = nums[j];
+            nums[j] = temp;
+        }
+        return nums;
+    }
+
+    public ListNode getKthFromEnd(ListNode head, int k) {
+        if (head == null) {
+            return null;
+        }
+        ListNode slow = head;
+        ListNode fast = head;
+        for (int i = 0; i < k && fast != null; i++) {
+            fast = fast.next;
+        }
+        while (fast != null) {
+            fast = fast.next;
+            slow = slow.next;
+        }
+        return slow;
+    }
+
+    public ListNode reverseList(ListNode head) {
+        if (head == null) {
+            return null;
+        }
+        ListNode pre = null;
+        ListNode p = head;
+        ListNode newHead = null;
+        while (p != null) {
+            ListNode next = p.next;
+            if (next == null) {
+                newHead = p;
+            }
+            p.next = pre;
+            pre = p;
+            p = next;
+        }
+        return newHead;
+    }
+
+    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+        if (l1 == null) {
+            return l2;
+        }
+        if (l2 == null) {
+            return l1;
+        }
+        ListNode dummy = new ListNode(0);
+        ListNode p = dummy;
+        while (l1 != null && l2 != null) {
+            if (l1.val <= l2.val) {
+                p.next = l1;
+                l1 = l1.next;
+            } else {
+                p.next = l2;
+                l2 = l2.next;
+            }
+            p = p.next;
+        }
+        if (l1 != null) {
+            p.next = l1;
+        }
+        if (l2 != null) {
+            p.next = l2;
+        }
+        return dummy.next;
+    }
+
+    public int[] spiralOrder(int[][] matrix) {
+        if (matrix == null || matrix.length == 0 || matrix[0].length == 0) {
+            return new int[0];
+        }
+        int rows = matrix.length, columns = matrix[0].length;
+        int[] order = new int[rows * columns];
+        int index = 0;
+        int left = 0, right = columns - 1, top = 0, bottom = rows - 1;
+        while (left <= right && top <= bottom) {
+            for (int column = left; column <= right; column++) {
+                order[index++] = matrix[top][column];
+            }
+            for (int row = top + 1; row <= bottom; row++) {
+                order[index++] = matrix[row][right];
+            }
+            if (left < right && top < bottom) {
+                for (int column = right - 1; column > left; column--) {
+                    order[index++] = matrix[bottom][column];
+                }
+                for (int row = bottom; row > top; row--) {
+                    order[index++] = matrix[row][left];
+                }
+            }
+            left++;
+            right--;
+            top++;
+            bottom--;
+        }
+        return order;
+    }
 }
 
 class BuildTree {
@@ -293,5 +450,82 @@ class movingCount {
             n /= 10;
         }
         return res;
+    }
+}
+
+class IsSubStructure {
+    public boolean isSubStructure(TreeNode A, TreeNode B) {
+        if (A == null || B == null) {
+            return false;
+        }
+        return recur(A, B) || isSubStructure(A.left, B) || isSubStructure(A.right, B);
+    }
+
+    private boolean recur(TreeNode A, TreeNode B) {
+        if (B == null) {
+            return true;
+        }
+        if (A == null) {
+            return false;
+        }
+        if (A.val != B.val) {
+            return false;
+        }
+        return recur(A.left, B.left) && recur(A.right, B.right);
+    }
+}
+
+class MirrorTree {
+    public TreeNode mirrorTree_recur(TreeNode root) {
+        if (root == null) {
+            return null;
+        }
+        TreeNode temp = root.left;
+        root.left = mirrorTree_recur(root.right);
+        root.right = mirrorTree_recur(temp);
+        return root;
+    }
+
+    public TreeNode mirrorTree(TreeNode root) {
+        if (root == null) {
+            return null;
+        }
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(root);
+        while (!stack.empty()) {
+            TreeNode node = stack.pop();
+            if (node.left != null) {
+                stack.push(node.left);
+            }
+            if (node.right != null) {
+                stack.push(node.right);
+            }
+            TreeNode temp = node.left;
+            node.left = node.right;
+            node.right = temp;
+        }
+        return root;
+    }
+}
+
+class IsSymmetric {
+    public boolean isSymmetric(TreeNode root) {
+        if (root == null) {
+            return true;
+        }
+        return recur(root.left, root.right);
+    }
+
+    private boolean recur(TreeNode a, TreeNode b) {
+        if (a == null && b == null) {
+            return true;
+        }
+        if (a == null || b == null) {
+            return false;
+        }
+        if (a.val != b.val) {
+            return false;
+        }
+        return recur(a.left, b.right) && recur(a.right, b.left);
     }
 }
